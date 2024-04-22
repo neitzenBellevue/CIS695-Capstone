@@ -1,3 +1,27 @@
 <resources>
-    <string name="app_name">CIS695-Capstone</string>
+    <string name="app_name">CIS695 Capstone</string>
+    <string name="record_weight_button">Record Weight</string>
+    <string name="view_history_button">Weight History</string>
+    <string name="new_picture_button">Take Picture</string>
+    <string name="edit_settings_button">Edit Settings</string>
+    <string name="weight_label">Current Weight</string>
+    <string name="weight_history_label">Weight History</string>
+    <string name="progress_picture">Progress Pictures</string>
+    <string name="summary_page_title">Weight Summary</string>
+    <string name="title_activity_edit_settings">editSettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

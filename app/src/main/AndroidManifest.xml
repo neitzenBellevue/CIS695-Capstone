@@ -13,11 +13,27 @@
         android:theme="@style/Theme.CIS695Capstone"
         tools:targetApi="31">
         <activity
+            android:name=".editSettingsActivity"
+            android:exported="false"
+            android:label="App Settings"
+            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".weightHistoryActivity"
+            android:exported="false"
+            android:label="Weight History"
+            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".weightEntryActivity"
+            android:exported="false"
+            android:label="Add Weight Entry"
+            android:parentActivityName=".MainActivity"/>
+        <activity
             android:name=".MainActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
