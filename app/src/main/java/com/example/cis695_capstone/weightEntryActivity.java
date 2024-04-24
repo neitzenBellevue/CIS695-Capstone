@@ -8,34 +8,42 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 
 public class weightEntryActivity extends AppCompatActivity {
     private DatePickerDialog datePickerDialog;
     private Button dateButton;
+    private TextView weight;
+    private List<entry> history = new ArrayList<entry>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_weight_entry);
         initDatePicker();
-        dateButton = findViewById(R.id.weightPicker);
-        dateButton.setText(getTodaysDate());
+        dateButton = findViewById(R.id.datePickerButton);
+        dateButton.setText(getTodaysDate()); // Sets default day to today.
+        weight = findViewById(R.id.weightEntry);
+        weight.setText(Double.toString(getIntent()
+                .getDoubleExtra("lastWeight", 155))); // Sets default weight to last known or 150LBS);
     }
 
     public void submitButton(View button){
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
+        if(Integer.parseInt(((EditText)findViewById(R.id.weightEntry)).getText().toString()) > 0){ // Verifying that weight exists.
+            Intent i = new Intent(this, MainActivity.class);
+            i.putExtra("date", (dateButton.getText().toString()));
+            i.putExtra("weight", (Double.parseDouble(weight.getText().toString()))); //Todo: Figure out why passing decimals breaks program
+            i.putExtra("history", getIntent().getBundleExtra("history"));
+            startActivity(i);
+        }
     }
 
     public void cancelButton(View button){
@@ -58,7 +66,7 @@ public class weightEntryActivity extends AppCompatActivity {
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        int style = AlertDialog.THEME_HOLO_LIGHT;
+        int style = AlertDialog.BUTTON_POSITIVE;
 
         datePickerDialog = new DatePickerDialog(this, style, dateSetListener, year, month, day);
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());

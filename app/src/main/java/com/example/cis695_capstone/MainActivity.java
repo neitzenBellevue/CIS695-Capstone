@@ -2,17 +2,21 @@ package com.example.cis695_capstone;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,11 +24,17 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    public List<entry> history = new ArrayList<entry>();
+    private List<entry> history = new ArrayList<entry>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if(getIntent().getBundleExtra("history") != null){
+            Bundle args = getIntent().getBundleExtra("history");
+            history = (ArrayList) args.getSerializable("history");
+        }
+        updateHistory(getIntent().getStringExtra("date"), getIntent().getDoubleExtra("weight", -1));
+        // Todo: figure out why weight with decimals breaks program
         renderGraph();
         renderLatestWeight();
         renderLastFiveWeight();
@@ -37,6 +47,12 @@ public class MainActivity extends AppCompatActivity {
             case "addWeightButton":
                 Log.d("weight button","pressed add weight button");
                 i = new Intent(this, weightEntryActivity.class);
+                if(!history.isEmpty()) {
+                    i.putExtra("lastWeight", history.get(history.size() - 1).getWeight());
+                    Bundle args = new Bundle();
+                    args.putSerializable("history", (Serializable)history);
+                    i.putExtra("history", args);
+                }
                 startActivity(i);
                 break;
             case "weightHistoryButton":
@@ -72,27 +88,40 @@ public class MainActivity extends AppCompatActivity {
     private void renderLastFiveWeight() {
         StringBuilder temp = new StringBuilder();
         if (!history.isEmpty()) {
-            for (int x = history.size(); x > 0; x--) {
-                temp.append(history.get(x - 1).toString()).append("/n");
-            }
+            if(history.size() > 5){
+                for (int x = history.size(); x > history.size() - 5; x--) {
+                    temp.append(history.get(x - 1).toString()).append("\n");
+                }
+            } else
+                for (int x = history.size(); x > 0; x--) {
+                    temp.append(history.get(x - 1).toString()).append("\n");
+                }
             ((TextView) findViewById(R.id.weightHistoryDataText)).setText(temp.toString());
         }
     }
+
+    private void updateHistory(String date, double weight){
+        if(weight == -1) return;
+        else{
+            entry temp = new entry(weight, date);
+            history.add(temp);
+        }
+    }
 }
-class entry {
+class entry implements Serializable {
     private double weight;
-    private Date date;
-    public entry(double weight, Date date){
+    private String date;
+    public entry(double weight, String date){
         this.weight = weight;
         this.date = date;
     }
     public double getWeight(){
         return weight;
     }
-    public Date getDate(){
+    public String getDate(){
         return this.date;
     }
-    public void setDate(Date date){
+    public void setDate(String date){
         this.date = date;
     }
     public void setWeight(double weight){
@@ -100,6 +129,6 @@ class entry {
     }
     @Override
     public String toString(){
-        return weight + ", " + date.toString();
+        return weight + ", " + date;
     }
 }

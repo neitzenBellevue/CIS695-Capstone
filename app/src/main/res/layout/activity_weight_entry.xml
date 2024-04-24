@@ -37,7 +37,7 @@
         android:text="Submit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weightPicker" />
+        app:layout_constraintTop_toBottomOf="@+id/datePickerButton" />
 
     <EditText
         android:id="@+id/weightEntry"
@@ -69,20 +69,19 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="48dp"
         android:text="Date:"
-        app:layout_constraintEnd_toStartOf="@+id/weightPicker"
+        app:layout_constraintEnd_toStartOf="@+id/datePickerButton"
         app:layout_constraintHorizontal_bias="0.537"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <Button
-        android:id="@+id/weightPicker"
+        android:id="@+id/datePickerButton"
         style="?android:spinnerStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:onClick="openDatePicker"
         android:text="Jan 01 2024"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="@color/black"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
