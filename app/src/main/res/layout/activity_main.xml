@@ -53,7 +53,7 @@
             android:id="@+id/bmiGenerated"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="64dp"
             app:layout_constraintStart_toEndOf="@+id/bmiLabel"
             app:layout_constraintTop_toTopOf="@+id/bmiLabel" />
 
@@ -61,9 +61,28 @@
             android:id="@+id/toDateGenerated"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            app:layout_constraintStart_toEndOf="@+id/toDateLabel"
-            app:layout_constraintTop_toTopOf="@+id/toDateLabel" />
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="@+id/bmiGenerated"
+            app:layout_constraintTop_toBottomOf="@+id/bmiGenerated" />
+
+        <TextView
+            android:id="@+id/currentWeightTitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/weight_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toDateLabel" />
+
+        <TextView
+            android:id="@+id/currentWeightDataText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="No History"
+            app:layout_constraintStart_toStartOf="@+id/toDateGenerated"
+            app:layout_constraintTop_toBottomOf="@+id/toDateGenerated" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -93,82 +112,27 @@
             android:id="@+id/addWeightButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
             android:layout_marginBottom="8dp"
             android:onClick="navButtons"
             android:text="@string/record_weight_button"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/currentWeightTitleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/weight_label"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/currentWeightDataText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="No History"
-            app:layout_constraintEnd_toEndOf="@+id/currentWeightTitleText"
-            app:layout_constraintStart_toStartOf="@+id/currentWeightTitleText"
-            app:layout_constraintTop_toBottomOf="@+id/currentWeightTitleText" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/weightHistory"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/currentWeight">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
 
         <Button
             android:id="@+id/weightHistoryButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="8dp"
             android:onClick="navButtons"
             android:text="@string/view_history_button"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/addWeightButton"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/weightHistoryDataText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="No History"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/weightHistoryTitleText"
-            app:layout_constraintStart_toStartOf="@+id/weightHistoryTitleText"
-            app:layout_constraintTop_toBottomOf="@+id/weightHistoryTitleText" />
-
-        <TextView
-            android:id="@+id/weightHistoryTitleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/weight_history_label"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -176,12 +140,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weightHistory">
+        app:layout_constraintTop_toBottomOf="@+id/currentWeight">
 
         <Button
             android:id="@+id/progressPicButton"
@@ -243,4 +206,5 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
