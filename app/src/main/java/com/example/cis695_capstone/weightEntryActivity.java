@@ -38,13 +38,14 @@ public class weightEntryActivity extends AppCompatActivity {
     }
 
     public void submitButton(View button){
-        if(Integer.parseInt(((EditText)findViewById(R.id.weightEntry)).getText().toString()) > 0){ // Verifying that weight exists.
+        if(!weight.getText().toString().isEmpty() && Integer.parseInt(weight.getText().toString()) > 0 &&
+                !dateButton.getText().toString().isEmpty()){ // Verifying that weight and date exists;
             Intent i = new Intent(this, MainActivity.class);
             i.putExtra("date", (dateButton.getText().toString()));
             i.putExtra("weight", Integer.parseInt(weight.getText().toString()));
             i.putExtra("history", getIntent().getBundleExtra("history"));
             startActivity(i);
-        }
+        } else findViewById(R.id.errorText).setVisibility(View.VISIBLE);
     }
 
     public void cancelButton(View button){
