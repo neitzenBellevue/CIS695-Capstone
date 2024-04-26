@@ -25,6 +25,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private List<entry> history = new ArrayList<entry>();
+    private int beginningWeight = 0;
+    private int goalWeight = 0;
+    private boolean gender = true;
+    private int height = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,9 +37,9 @@ public class MainActivity extends AppCompatActivity {
             Bundle args = getIntent().getBundleExtra("history");
             history = (ArrayList) args.getSerializable("history");
         }
-        updateHistory(getIntent().getStringExtra("date"), getIntent().getDoubleExtra("weight", -1));
-        // Todo: figure out why weight with decimals breaks program
-        renderGraph();
+        updateHistory(getIntent().getStringExtra("date"), getIntent().getIntExtra("weight", -1));
+        renderBMI();
+        renderToDate();
         renderLatestWeight();
         renderLastFiveWeight();
     }
@@ -62,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "progressPicButton":
                 Log.d("picture button","pressed add progress picture button");
-                // TODO
+                // TODO: Future assignmen
                 break;
             case "appSettingsButton":
                 Log.d("settings button","pressed settings menu button");
@@ -73,8 +77,18 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    private void renderGraph(){
-        // Todo: Read database and render graph based on entries
+    private void renderBMI(){
+
+    }
+
+    private void renderToDate(){
+        if(!history.isEmpty()){
+            int highest = 0;
+            for(entry i : history){
+                if(i.getWeight() > highest) highest = i.getWeight();
+            }
+            ((TextView)findViewById(R.id.toDateGenerated)).setText("You've lost " + Integer.toString(highest-beginningWeight) + "pounds!");
+        } else ((TextView)findViewById(R.id.toDateGenerated)).setText("You haven't started yet. Good Luck!");
     }
 
     private void renderLatestWeight(){
@@ -100,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void updateHistory(String date, double weight){
+    private void updateHistory(String date, int weight){
         if(weight == -1) return;
         else{
             entry temp = new entry(weight, date);
@@ -109,13 +123,13 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 class entry implements Serializable {
-    private double weight;
+    private int weight;
     private String date;
-    public entry(double weight, String date){
+    public entry(int weight, String date){
         this.weight = weight;
         this.date = date;
     }
-    public double getWeight(){
+    public int getWeight(){
         return weight;
     }
     public String getDate(){
@@ -124,7 +138,7 @@ class entry implements Serializable {
     public void setDate(String date){
         this.date = date;
     }
-    public void setWeight(double weight){
+    public void setWeight(int weight){
         this.weight = weight;
     }
     @Override

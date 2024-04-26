@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -32,15 +33,15 @@ public class weightEntryActivity extends AppCompatActivity {
         dateButton = findViewById(R.id.datePickerButton);
         dateButton.setText(getTodaysDate()); // Sets default day to today.
         weight = findViewById(R.id.weightEntry);
-        weight.setText(Double.toString(getIntent()
-                .getDoubleExtra("lastWeight", 155))); // Sets default weight to last known or 150LBS);
+        weight.setText(Integer.toString(getIntent()
+                .getIntExtra("lastWeight", 150))); // Sets default weight to last known or 150LBS);
     }
 
     public void submitButton(View button){
         if(Integer.parseInt(((EditText)findViewById(R.id.weightEntry)).getText().toString()) > 0){ // Verifying that weight exists.
             Intent i = new Intent(this, MainActivity.class);
             i.putExtra("date", (dateButton.getText().toString()));
-            i.putExtra("weight", (Double.parseDouble(weight.getText().toString()))); //Todo: Figure out why passing decimals breaks program
+            i.putExtra("weight", Integer.parseInt(weight.getText().toString()));
             i.putExtra("history", getIntent().getBundleExtra("history"));
             startActivity(i);
         }
@@ -48,6 +49,7 @@ public class weightEntryActivity extends AppCompatActivity {
 
     public void cancelButton(View button){
         Intent i = new Intent(this, MainActivity.class);
+        i.putExtra("history", getIntent().getBundleExtra("history"));
         startActivity(i);
     }
 
