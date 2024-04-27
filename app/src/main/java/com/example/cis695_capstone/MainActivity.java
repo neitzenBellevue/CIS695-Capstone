@@ -28,17 +28,25 @@ public class MainActivity extends AppCompatActivity {
     private List<entry> history = new ArrayList<entry>();
     private int beginningWeight = 200;
     private int goalWeight = 180;
-    private boolean gender = true;
+    private boolean gender = true; // True = Male, False = Female.
     private int height = 180;
+    private String goalDate = "Jan 27 2050";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        updateVariables();
+        updateHistory(getIntent().getStringExtra("date"), getIntent().getIntExtra("weight", -1));
+        renderBMI();
+        renderToDate();
+        renderLatestWeight();
+    }
+
+    private void updateVariables(){
         if(getIntent().getBundleExtra("history") != null){
             Bundle args = getIntent().getBundleExtra("history");
             history = (ArrayList) args.getSerializable("history");
         } else {
-            // Todo: Rework into startup method
             Calendar cal = Calendar.getInstance();
             int year = cal.get(Calendar.YEAR);
             int month = cal.get(Calendar.MONTH);
@@ -50,12 +58,11 @@ public class MainActivity extends AppCompatActivity {
             build.append(year + " ");
             history.add(0, new entry(beginningWeight, build.toString()));
         }
-        updateHistory(getIntent().getStringExtra("date"), getIntent().getIntExtra("weight", -1));
-        renderBMI();
-        renderToDate();
-        renderLatestWeight();
+        this.beginningWeight = getIntent().getIntExtra("beginningWeight", beginningWeight);
+        this.goalWeight = getIntent().getIntExtra("goalWeight", goalWeight);
+        this.gender = getIntent().getBooleanExtra("gender", gender);
+        this.height = getIntent().getIntExtra("height", height);
     }
-
     // The method will act as the logic performed when buttons on the Summary Screen are pressed.
     public void navButtons(View button){
         Intent i = new Intent(this, MainActivity.class);
@@ -73,7 +80,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "weightHistoryButton":
                 Log.d("history button","pressed weight history button");
-                i = new Intent(this, weightHistoryActivity.class);
+                if(!history.isEmpty()) {
+                    i.putExtra("lastWeight", history.get(history.size() - 1).getWeight());
+                    Bundle args = new Bundle();
+                    args.putSerializable("history", (Serializable)history);
+                    i.putExtra("history", args);
+                }
                 startActivity(i);
                 break;
             case "progressPicButton":
@@ -83,12 +95,21 @@ public class MainActivity extends AppCompatActivity {
             case "appSettingsButton":
                 Log.d("settings button","pressed settings menu button");
                 i = new Intent(this, settingsActivity.class);
+                if(!history.isEmpty()) {
+                    Bundle args = new Bundle();
+                    args.putSerializable("history", (Serializable)history);
+                    i.putExtra("history", args);
+                }
+                i.putExtra("beginningWeight", beginningWeight);
+                i.putExtra("goalWeight", goalWeight);
+                i.putExtra("gender", gender);
+                i.putExtra("height", height);
+                i.putExtra("goalDate", goalDate);
                 startActivity(i);
                 break;
         }
         startActivity(i);
     }
-
     private void renderBMI(){
         if(!history.isEmpty()){
             int currentWeight = history.get(history.size() - 1).getWeight();
@@ -98,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
             ((TextView)findViewById(R.id.bmiGenerated)).setText(String.format("%.2f", bmi));
         } else ((TextView)findViewById(R.id.bmiGenerated)).setText(Double.toString(beginningWeight / (height * height)));
     }
-
     private void renderToDate(){
         if(!history.isEmpty()){
             int weightLost = beginningWeight - history.get(history.size() - 1).getWeight();
@@ -106,12 +126,10 @@ public class MainActivity extends AppCompatActivity {
              else ((TextView)findViewById(R.id.toDateGenerated)).setText("You've gained " + weightLost*-1 + " pounds!");
         } else ((TextView)findViewById(R.id.toDateGenerated)).setText("You haven't started yet.");
     }
-
     private void renderLatestWeight(){
         if(!history.isEmpty()){
-            ((TextView)findViewById(R.id.currentWeightDataText)).setText(
-                    history.get(history.size() - 1).toString()
-            );
+            int curWeight = history.get(history.size() - 1).getWeight();
+            ((TextView)findViewById(R.id.currentWeightDataText)).setText(Integer.toString(curWeight) + " LBS");
         }
     }
     private void updateHistory(String date, int weight){
@@ -121,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
             history.add(temp);
         }
     }
-
     private String numToMonth(int month){
             if(month == 1){
                 return "JAN";
@@ -180,9 +197,5 @@ class entry implements Serializable {
     }
     public void setWeight(int weight){
         this.weight = weight;
-    }
-    @Override
-    public String toString(){
-        return weight + ", " + date;
     }
 }
