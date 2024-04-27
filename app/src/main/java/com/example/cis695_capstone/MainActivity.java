@@ -76,16 +76,27 @@ public class MainActivity extends AppCompatActivity {
                     args.putSerializable("history", (Serializable)history);
                     i.putExtra("history", args);
                 }
+                i.putExtra("beginningWeight", beginningWeight);
+                i.putExtra("goalWeight", goalWeight);
+                i.putExtra("gender", gender);
+                i.putExtra("height", height);
+                i.putExtra("goalDate", goalDate);
                 startActivity(i);
                 break;
             case "weightHistoryButton":
                 Log.d("history button","pressed weight history button");
+                i = new Intent(this, weightHistoryActivity.class);
                 if(!history.isEmpty()) {
                     i.putExtra("lastWeight", history.get(history.size() - 1).getWeight());
                     Bundle args = new Bundle();
                     args.putSerializable("history", (Serializable)history);
                     i.putExtra("history", args);
                 }
+                i.putExtra("beginningWeight", beginningWeight);
+                i.putExtra("goalWeight", goalWeight);
+                i.putExtra("gender", gender);
+                i.putExtra("height", height);
+                i.putExtra("goalDate", goalDate);
                 startActivity(i);
                 break;
             case "progressPicButton":

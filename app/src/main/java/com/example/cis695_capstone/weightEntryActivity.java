@@ -44,6 +44,11 @@ public class weightEntryActivity extends AppCompatActivity {
             i.putExtra("date", (dateButton.getText().toString()));
             i.putExtra("weight", Integer.parseInt(weight.getText().toString()));
             i.putExtra("history", getIntent().getBundleExtra("history"));
+            i.putExtra("beginningWeight", getIntent().getIntExtra("beginningWeight", 200));
+            i.putExtra("goalWeight", getIntent().getIntExtra("goalWeight", 180));
+            i.putExtra("gender", getIntent().getBooleanExtra("gender", true));
+            i.putExtra("height", getIntent().getIntExtra("height", 180));
+            i.putExtra("goalDate", getIntent().getStringExtra("goalDate"));
             startActivity(i);
         } else findViewById(R.id.errorText).setVisibility(View.VISIBLE);
     }
@@ -51,6 +56,11 @@ public class weightEntryActivity extends AppCompatActivity {
     public void cancelButton(View button){
         Intent i = new Intent(this, MainActivity.class);
         i.putExtra("history", getIntent().getBundleExtra("history"));
+        i.putExtra("beginningWeight", getIntent().getIntExtra("beginningWeight", 200));
+        i.putExtra("goalWeight", getIntent().getIntExtra("goalWeight", 180));
+        i.putExtra("gender", getIntent().getBooleanExtra("gender", true));
+        i.putExtra("height", getIntent().getIntExtra("height", 180));
+        i.putExtra("goalDate", getIntent().getStringExtra("goalDate"));
         startActivity(i);
     }
 

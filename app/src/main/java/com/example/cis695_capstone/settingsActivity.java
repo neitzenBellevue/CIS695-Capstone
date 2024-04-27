@@ -31,7 +31,6 @@ public class settingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_settings);
         initDatePicker();
         dateButton = findViewById(R.id.datePickerButton2);
