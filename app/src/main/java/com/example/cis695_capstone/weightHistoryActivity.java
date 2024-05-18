@@ -42,7 +42,7 @@ public class weightHistoryActivity extends AppCompatActivity {
 
     private void renderHistory(){
         Bundle args = getIntent().getBundleExtra("history");
-        ArrayList<entry> history = (ArrayList<entry>) args.getSerializable("history");
+        ArrayList<weightEntry> history = (ArrayList<weightEntry>) args.getSerializable("history");
         ListView myListView = (ListView) findViewById(R.id.listView);
         EntryListAdapter adapter = new EntryListAdapter(this, R.layout.dynamic_listview_adapter, history);
         myListView.setAdapter(adapter);
@@ -66,11 +66,11 @@ public class weightHistoryActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    static class EntryListAdapter extends ArrayAdapter<entry> {
+    static class EntryListAdapter extends ArrayAdapter<weightEntry> {
         private static final String TAG = "EntryListAdapter";
         private Context context;
         int resource;
-        public EntryListAdapter(Context context, int resource, ArrayList<entry> objects) {
+        public EntryListAdapter(Context context, int resource, ArrayList<weightEntry> objects) {
             super(context, resource, objects);
             this.resource = resource;
             this.context = context;
@@ -81,7 +81,7 @@ public class weightHistoryActivity extends AppCompatActivity {
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             int weight = getItem(position).getWeight();
             String date = getItem(position).getDate();
-            entry newEntry = new entry(weight, date);
+            weightEntry newEntry = new weightEntry(weight, date);
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView = inflater.inflate(resource, parent, false);
 

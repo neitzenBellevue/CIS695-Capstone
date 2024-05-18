@@ -25,43 +25,25 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private List<entry> history = new ArrayList<entry>();
-    private int beginningWeight = 200;
-    private int goalWeight = 180;
-    private boolean gender = true; // True = Male, False = Female.
-    private int height = 180;
-    private String goalDate = "Jan 27 2050";
+    private List<weightEntry> history = new ArrayList<weightEntry>();
+    private int beginningWeight;
+    private int height;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         updateVariables();
-        updateHistory(getIntent().getStringExtra("date"), getIntent().getIntExtra("weight", -1));
         renderBMI();
         renderToDate();
         renderLatestWeight();
     }
 
+    // Updated to take information from database.
     private void updateVariables(){
-        if(getIntent().getBundleExtra("history") != null){
-            Bundle args = getIntent().getBundleExtra("history");
-            history = (ArrayList) args.getSerializable("history");
-        } else {
-            Calendar cal = Calendar.getInstance();
-            int year = cal.get(Calendar.YEAR);
-            int month = cal.get(Calendar.MONTH);
-            int day = cal.get(Calendar.DAY_OF_MONTH);
-            String monthStr = numToMonth(month);
-            StringBuilder build = new StringBuilder();
-            build.append(monthStr+ " ");
-            build.append(day + " ");
-            build.append(year + " ");
-            history.add(0, new entry(beginningWeight, build.toString()));
-        }
-        this.beginningWeight = getIntent().getIntExtra("beginningWeight", beginningWeight);
-        this.goalWeight = getIntent().getIntExtra("goalWeight", goalWeight);
-        this.gender = getIntent().getBooleanExtra("gender", gender);
-        this.height = getIntent().getIntExtra("height", height);
+        DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
+        this.history = databaseHelper.getAllEntries();
+        this.beginningWeight = databaseHelper.getBegWeight();
+        this.height = databaseHelper.getHeight();
     }
     // The method will act as the logic performed when buttons on the Summary Screen are pressed.
     public void navButtons(View button){
@@ -70,33 +52,11 @@ public class MainActivity extends AppCompatActivity {
             case "addWeightButton":
                 Log.d("weight button","pressed add weight button");
                 i = new Intent(this, weightEntryActivity.class);
-                if(!history.isEmpty()) {
-                    i.putExtra("lastWeight", history.get(history.size() - 1).getWeight());
-                    Bundle args = new Bundle();
-                    args.putSerializable("history", (Serializable)history);
-                    i.putExtra("history", args);
-                }
-                i.putExtra("beginningWeight", beginningWeight);
-                i.putExtra("goalWeight", goalWeight);
-                i.putExtra("gender", gender);
-                i.putExtra("height", height);
-                i.putExtra("goalDate", goalDate);
                 startActivity(i);
                 break;
             case "weightHistoryButton":
                 Log.d("history button","pressed weight history button");
                 i = new Intent(this, weightHistoryActivity.class);
-                if(!history.isEmpty()) {
-                    i.putExtra("lastWeight", history.get(history.size() - 1).getWeight());
-                    Bundle args = new Bundle();
-                    args.putSerializable("history", (Serializable)history);
-                    i.putExtra("history", args);
-                }
-                i.putExtra("beginningWeight", beginningWeight);
-                i.putExtra("goalWeight", goalWeight);
-                i.putExtra("gender", gender);
-                i.putExtra("height", height);
-                i.putExtra("goalDate", goalDate);
                 startActivity(i);
                 break;
             case "progressPicButton":
@@ -106,16 +66,6 @@ public class MainActivity extends AppCompatActivity {
             case "appSettingsButton":
                 Log.d("settings button","pressed settings menu button");
                 i = new Intent(this, settingsActivity.class);
-                if(!history.isEmpty()) {
-                    Bundle args = new Bundle();
-                    args.putSerializable("history", (Serializable)history);
-                    i.putExtra("history", args);
-                }
-                i.putExtra("beginningWeight", beginningWeight);
-                i.putExtra("goalWeight", goalWeight);
-                i.putExtra("gender", gender);
-                i.putExtra("height", height);
-                i.putExtra("goalDate", goalDate);
                 startActivity(i);
                 break;
         }
@@ -141,13 +91,6 @@ public class MainActivity extends AppCompatActivity {
         if(!history.isEmpty()){
             int curWeight = history.get(history.size() - 1).getWeight();
             ((TextView)findViewById(R.id.currentWeightDataText)).setText(Integer.toString(curWeight) + " LBS");
-        }
-    }
-    private void updateHistory(String date, int weight){
-        if(weight == -1) return;
-        else{
-            entry temp = new entry(weight, date);
-            history.add(temp);
         }
     }
     private String numToMonth(int month){
@@ -190,23 +133,3 @@ public class MainActivity extends AppCompatActivity {
             return "Error";
         }
     }
-class entry implements Serializable {
-    private int weight;
-    private String date;
-    public entry(int weight, String date){
-        this.weight = weight;
-        this.date = date;
-    }
-    public int getWeight(){
-        return weight;
-    }
-    public String getDate(){
-        return this.date;
-    }
-    public void setDate(String date){
-        this.date = date;
-    }
-    public void setWeight(int weight){
-        this.weight = weight;
-    }
-}

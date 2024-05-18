@@ -23,7 +23,7 @@ public class weightEntryActivity extends AppCompatActivity {
     private DatePickerDialog datePickerDialog;
     private Button dateButton;
     private TextView weight;
-    private List<entry> history = new ArrayList<entry>();
+    private List<weightEntry> history = new ArrayList<weightEntry>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
