@@ -23,44 +23,40 @@ public class weightEntryActivity extends AppCompatActivity {
     private DatePickerDialog datePickerDialog;
     private Button dateButton;
     private TextView weight;
-    private List<weightEntry> history = new ArrayList<weightEntry>();
+    DatabaseHelper databaseHelper = new DatabaseHelper(weightEntryActivity.this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_weight_entry);
         initDatePicker();
+
+        List<weightEntry> history = databaseHelper.getAllEntries();
+        String lastWeight = "150";
+        if(!history.isEmpty()) lastWeight = Integer.toString(history.get(history.size() -1).getWeight());
+
         dateButton = findViewById(R.id.datePickerButton);
         dateButton.setText(getTodaysDate()); // Sets default day to today.
         weight = findViewById(R.id.weightEntry);
-        weight.setText(Integer.toString(getIntent()
-                .getIntExtra("lastWeight", 150))); // Sets default weight to last known or 150LBS);
+        weight.setText(lastWeight); // Sets default weight to last known or 150LBS);
     }
 
     public void submitButton(View button){
         if(!weight.getText().toString().isEmpty() && Integer.parseInt(weight.getText().toString()) > 0 &&
                 !dateButton.getText().toString().isEmpty()){ // Verifying that weight and date exists;
             Intent i = new Intent(this, MainActivity.class);
-            i.putExtra("date", (dateButton.getText().toString()));
-            i.putExtra("weight", Integer.parseInt(weight.getText().toString()));
-            i.putExtra("history", getIntent().getBundleExtra("history"));
-            i.putExtra("beginningWeight", getIntent().getIntExtra("beginningWeight", 200));
-            i.putExtra("goalWeight", getIntent().getIntExtra("goalWeight", 180));
-            i.putExtra("gender", getIntent().getBooleanExtra("gender", true));
-            i.putExtra("height", getIntent().getIntExtra("height", 180));
-            i.putExtra("goalDate", getIntent().getStringExtra("goalDate"));
+
+            weightEntry newEntry = new weightEntry(Integer.parseInt(weight.getText().toString()),
+                    dateButton.getText().toString(), "");
+
+            databaseHelper.addEntry(newEntry);
+
             startActivity(i);
         } else findViewById(R.id.errorText).setVisibility(View.VISIBLE);
     }
 
     public void cancelButton(View button){
         Intent i = new Intent(this, MainActivity.class);
-        i.putExtra("history", getIntent().getBundleExtra("history"));
-        i.putExtra("beginningWeight", getIntent().getIntExtra("beginningWeight", 200));
-        i.putExtra("goalWeight", getIntent().getIntExtra("goalWeight", 180));
-        i.putExtra("gender", getIntent().getBooleanExtra("gender", true));
-        i.putExtra("height", getIntent().getIntExtra("height", 180));
-        i.putExtra("goalDate", getIntent().getStringExtra("goalDate"));
         startActivity(i);
     }
 

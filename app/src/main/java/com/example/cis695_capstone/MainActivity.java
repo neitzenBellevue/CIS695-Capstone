@@ -1,6 +1,7 @@
 package com.example.cis695_capstone;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private List<weightEntry> history = new ArrayList<weightEntry>();
     private int beginningWeight;
     private int height;
+    private final DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
 
     // Updated to take information from database.
     private void updateVariables(){
-        DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
         this.history = databaseHelper.getAllEntries();
         this.beginningWeight = databaseHelper.getBegWeight();
         this.height = databaseHelper.getHeight();

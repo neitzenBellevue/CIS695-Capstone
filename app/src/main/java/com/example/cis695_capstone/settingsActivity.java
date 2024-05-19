@@ -17,8 +17,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class settingsActivity extends AppCompatActivity {
     private int beginningWeight;
@@ -33,31 +35,23 @@ public class settingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         initDatePicker();
+        renderView();
         dateButton = findViewById(R.id.datePickerButton2);
         dateButton.setText(getTodaysDate()); // Sets default day to today.
-        renderView();
     }
 
     public void submitButton(View button){
         Intent i = new Intent(this, MainActivity.class);
-        i.putExtra("history", getIntent().getBundleExtra("history"));
         updateVariables();
-        i.putExtra("beginningWeight", beginningWeight);
-        i.putExtra("goalWeight", goalWeight);
-        i.putExtra("gender", gender);
-        i.putExtra("height", height);
-        i.putExtra("goalDate", goalDate);
+
+        DatabaseHelper databaseHelper = new DatabaseHelper(settingsActivity.this);
+        boolean success = databaseHelper.updateSettings(beginningWeight, goalWeight, gender, height, goalDate);
+
         startActivity(i);
     }
 
     public void cancelButton(View button){
         Intent i = new Intent(this, MainActivity.class);
-        i.putExtra("history", getIntent().getBundleExtra("history"));
-        i.putExtra("beginningWeight", beginningWeight);
-        i.putExtra("goalWeight", goalWeight);
-        i.putExtra("gender", gender);
-        i.putExtra("height", height);
-        i.putExtra("goalDate", goalDate);
         startActivity(i);
     }
 
@@ -71,11 +65,13 @@ public class settingsActivity extends AppCompatActivity {
     }
 
     private void renderView(){
-        this.beginningWeight = getIntent().getIntExtra("beginningWeight", 200);
-        this.goalWeight = getIntent().getIntExtra("goalWeight", 180);
-        this.gender = getIntent().getBooleanExtra("gender", true);
-        this.height = getIntent().getIntExtra("height", 180);
-        this.goalDate = getIntent().getStringExtra("goalDate");
+        DatabaseHelper databaseHelper = new DatabaseHelper(settingsActivity.this);
+
+        this.beginningWeight = databaseHelper.getBegWeight();
+        this.goalWeight = databaseHelper.getGoalWeight();
+        this.gender = databaseHelper.getGender();
+        this.height = databaseHelper.getHeight();
+        this.goalDate = databaseHelper.getGoalDate();
 
         ((EditText)findViewById(R.id.beginningWeight)).setText(Integer.toString(beginningWeight));
         ((EditText)findViewById(R.id.goalWeight)).setText(Integer.toString(goalWeight));

@@ -7,19 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
+
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RelativeLayout;
+
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,28 +38,24 @@ public class weightHistoryActivity extends AppCompatActivity {
     }
 
     private void renderHistory(){
-        Bundle args = getIntent().getBundleExtra("history");
-        ArrayList<weightEntry> history = (ArrayList<weightEntry>) args.getSerializable("history");
+        DatabaseHelper databaseHelper = new DatabaseHelper(weightHistoryActivity.this);
+        List<weightEntry> history = databaseHelper.getAllEntries();
         ListView myListView = (ListView) findViewById(R.id.listView);
-        EntryListAdapter adapter = new EntryListAdapter(this, R.layout.dynamic_listview_adapter, history);
+        EntryListAdapter adapter = new EntryListAdapter(this,
+                R.layout.dynamic_listview_adapter, (ArrayList<weightEntry>)history);
         myListView.setAdapter(adapter);
     }
     private void updateVariables(){
-        this.beginningWeight = getIntent().getIntExtra("beginningWeight", 200);
-        this.goalWeight = getIntent().getIntExtra("goalWeight", 180);
-        this.gender = getIntent().getBooleanExtra("gender", true);
-        this.height = getIntent().getIntExtra("height", 180);
-        this.goalDate = getIntent().getStringExtra("goalDate");
+        DatabaseHelper databaseHelper = new DatabaseHelper(weightHistoryActivity.this);
+        this.beginningWeight = databaseHelper.getBegWeight();
+        this.goalWeight = databaseHelper.getGoalWeight();
+        this.gender = databaseHelper.getGender();
+        this.height = databaseHelper.getHeight();
+        this.goalDate = databaseHelper.getGoalDate();
     }
 
     public void returnToSummary(View view) {
         Intent i = new Intent(this, MainActivity.class);
-        i.putExtra("history", getIntent().getBundleExtra("history"));
-        i.putExtra("beginningWeight", beginningWeight);
-        i.putExtra("goalWeight", goalWeight);
-        i.putExtra("gender", gender);
-        i.putExtra("height", height);
-        i.putExtra("goalDate", goalDate);
         startActivity(i);
     }
 
@@ -81,7 +74,7 @@ public class weightHistoryActivity extends AppCompatActivity {
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             int weight = getItem(position).getWeight();
             String date = getItem(position).getDate();
-            weightEntry newEntry = new weightEntry(weight, date);
+            weightEntry newEntry = new weightEntry(weight, date, "");
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView = inflater.inflate(resource, parent, false);
 

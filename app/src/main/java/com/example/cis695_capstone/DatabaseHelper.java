@@ -39,7 +39,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(createWeightTable);
         db.execSQL(createSettingsTable);
-        setSettings();
+
+        setSettings(db);
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -56,6 +57,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long insert = db.insert(WEIGHT_TABLE, null, cv);
 
+        db.close();
+
         return insert != -1;
     }
 
@@ -69,11 +72,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long insert = db.update(WEIGHT_TABLE, cv, "_id = ?", new String[]{ID});
 
+        db.close();
+
         return insert != -1;
     }
 
     // In cases where multiple users exist, each row would represent a different user. Not in scope for this though.
-    public boolean updateSettings(String beginningWeight, String goalWeight, Boolean gender, int height, String goalDate){
+    public boolean updateSettings(int beginningWeight, int goalWeight, Boolean gender, int height, String goalDate){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -82,20 +87,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_GOAL_WEIGHT, goalWeight);
         cv.put(COLUMN_HEIGHT, height);
         cv.put(COLUMN_GOAL_DATE, goalDate);
-        String id = "1";
 
-        long insert = db.update(SETTINGS_TABLE, cv, "_id = ?", new String[]{id});
+        long insert = db.insert(SETTINGS_TABLE, null, cv);
+
+        db.close();
 
         return insert != -1;
     }
 
-    public void setSettings(){
+    public void setSettings(SQLiteDatabase db){
         int beginningWeight = 200;
         int goalWeight = 180;
         boolean gender = true; // True = Male, False = Female.
         int height = 180;
         String goalDate = "Jan 27 2050";
-        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
         cv.put(COLUMN_GENDER, gender);
@@ -104,65 +109,81 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_HEIGHT, height);
         cv.put(COLUMN_GOAL_DATE, goalDate);
 
-        db.insert(SETTINGS_TABLE, null, cv);
+        long insert = db.insert(SETTINGS_TABLE, null, cv);
     }
 
     public boolean getGender(){
         String queryString = "SELECT * FROM " + SETTINGS_TABLE;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(queryString, null);
-
-        return cursor.getInt(2) != 0;
+        cursor.moveToLast();
+        int gender = cursor.getInt(3);
+        cursor.close();
+        return gender != 0;
     }
 
     public int getBegWeight(){
         String queryString = "SELECT * FROM " + SETTINGS_TABLE;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(queryString, null);
-
-        return cursor.getInt(0);
+        cursor.moveToLast();
+        int begWeight = cursor.getInt(1);
+        cursor.close();
+        return begWeight;
     }
 
     public int getGoalWeight(){
         String queryString = "SELECT * FROM " + SETTINGS_TABLE;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(queryString, null);
-        return cursor.getInt(1);
+        cursor.moveToLast();
+        int goalWeight = cursor.getInt(2);
+        cursor.close();
+        return goalWeight;
     }
 
     public int getHeight(){
         String queryString = "SELECT * FROM " + SETTINGS_TABLE;
+
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(queryString, null);
-        return cursor.getInt(3);
+        cursor.moveToLast();;
+        int height = cursor.getInt(4);
+        cursor.close();
+        db.close();
+        return height;
     }
 
     public String getGoalDate(){
         String queryString = "SELECT * FROM " + SETTINGS_TABLE;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(queryString, null);
-        return cursor.getString(4);
+        cursor.moveToLast();
+        String goalDate = cursor.getString(5);
+        cursor.close();
+        db.close();
+        return goalDate;
     }
 
     public List<weightEntry> getAllEntries(){
         List<weightEntry> history = new ArrayList<weightEntry>();
         String queryString = "SELECT * FROM " + WEIGHT_TABLE;
         SQLiteDatabase db = this.getReadableDatabase();
-
         Cursor cursor = db.rawQuery(queryString, null);
 
         if(cursor.moveToFirst()){
             do{
-                int weight = cursor.getInt(0);
-                String date = cursor.getString(1);
-                String location = cursor.getString(2);
+                int weight = cursor.getInt(1);
+                String date = cursor.getString(2);
+                String location = cursor.getString(3);
 
                 weightEntry newEntry = new weightEntry(weight, date, location);
                 history.add(newEntry);
-            } while(cursor.moveToFirst());
-        } else{
-
+            } while(cursor.moveToNext());
         }
+
+        cursor.close();
+
         return history;
     }
 }
