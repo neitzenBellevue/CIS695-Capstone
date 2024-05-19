@@ -9,7 +9,7 @@ public class weightEntry {
     public weightEntry(int weight, String date, String location) {
         this.weight = weight;
         this.date = date;
-        this.image = image;
+        this.image = location;
     }
     public int getWeight() {
         return weight;

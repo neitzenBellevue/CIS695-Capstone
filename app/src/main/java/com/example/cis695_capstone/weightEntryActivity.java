@@ -3,27 +3,42 @@ package com.example.cis695_capstone;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
+
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 public class weightEntryActivity extends AppCompatActivity {
     private DatePickerDialog datePickerDialog;
     private Button dateButton;
     private TextView weight;
+    private Button imageButton;
+    private ImageView imageView;
     DatabaseHelper databaseHelper = new DatabaseHelper(weightEntryActivity.this);
+    private ActivityResultLauncher<Intent> activityResultLauncher;
+    private String fname = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,13 +47,38 @@ public class weightEntryActivity extends AppCompatActivity {
         initDatePicker();
 
         List<weightEntry> history = databaseHelper.getAllEntries();
-        String lastWeight = "150";
+        String lastWeight = Integer.toString(databaseHelper.getBegWeight());
         if(!history.isEmpty()) lastWeight = Integer.toString(history.get(history.size() -1).getWeight());
 
-        dateButton = findViewById(R.id.datePickerButton);
+        this.dateButton = findViewById(R.id.datePickerButton);
         dateButton.setText(getTodaysDate()); // Sets default day to today.
-        weight = findViewById(R.id.weightEntry);
+        this.weight = findViewById(R.id.weightEntry);
         weight.setText(lastWeight); // Sets default weight to last known or 150LBS);
+        this.imageButton = findViewById(R.id.pictureButton);
+        this.imageView = findViewById(R.id.takenPhoto);
+
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                o -> {
+                    if(o.getResultCode() == RESULT_OK && o.getData() != null){;
+                        Bundle bundle = o.getData().getExtras();
+                        Bitmap bitmap = (Bitmap) bundle.get("data");
+                        imageView.setImageBitmap(bitmap);
+                        saveBitMap(bitmap);
+                        imageButton.setEnabled(false); // Todo: Delete picture if retaken and allow to do this over and over.
+                    }
+                });
+        imageButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View V){
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if(intent.resolveActivity(getPackageManager()) == null){
+                    activityResultLauncher.launch(intent);
+                } else{
+                    Toast.makeText(weightEntryActivity.this, "Error: No Camera Detected",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     public void submitButton(View button){
@@ -47,7 +87,7 @@ public class weightEntryActivity extends AppCompatActivity {
             Intent i = new Intent(this, MainActivity.class);
 
             weightEntry newEntry = new weightEntry(Integer.parseInt(weight.getText().toString()),
-                    dateButton.getText().toString(), "");
+                    dateButton.getText().toString(), "/data/data/com.example.cis695_capstone/files/images/" + fname);
 
             databaseHelper.addEntry(newEntry);
 
@@ -57,9 +97,29 @@ public class weightEntryActivity extends AppCompatActivity {
 
     public void cancelButton(View button){
         Intent i = new Intent(this, MainActivity.class);
+        File file = new File("/data/data/com.example.cis695_capstone/files/images/" + fname);
+        boolean delete = file.delete(); // Deletes file if not saved.
         startActivity(i);
     }
 
+    private void saveBitMap(Bitmap bm){
+        try {
+            String root = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_PICTURES).toString();
+            File myDir = new File("/data/data/com.example.cis695_capstone/files/images");
+            myDir.mkdirs();
+            Random rand = new Random();
+            this.fname = rand.nextInt(1000000) + ".jpg";
+            File file = new File(myDir, fname);
+
+            FileOutputStream out = new FileOutputStream(file);
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+        } catch( Exception e) {
+            Log.d("onBtnSavePng", e.toString());
+        }
+    }
     private void initDatePicker(){
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override

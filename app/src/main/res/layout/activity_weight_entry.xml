@@ -5,6 +5,7 @@
     android:id="@+id/Main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:onClick="pictureButton"
     tools:context=".weightEntryActivity">
 
     <TextView
@@ -27,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.459"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@+id/takenPhoto" />
 
     <TextView
         android:id="@+id/errorText"
@@ -104,21 +105,21 @@
         app:layout_constraintTop_toBottomOf="@+id/weightEntry" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/takenPhoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:clickable="false"
         app:layout_constraintEnd_toEndOf="@+id/datePickerButton"
         app:layout_constraintStart_toStartOf="@+id/datePickerButton"
         app:layout_constraintTop_toBottomOf="@+id/datePickerButton"
         app:srcCompat="@drawable/ic_launcher_background" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/pictureButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:enabled="false"
         android:text="Take Picture"
         app:layout_constraintEnd_toEndOf="@+id/textView2"
         app:layout_constraintStart_toStartOf="@+id/textView2"
@@ -130,10 +131,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Progress Picture:"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-        app:layout_constraintEnd_toStartOf="@+id/imageView2"
+        app:layout_constraintBottom_toBottomOf="@+id/takenPhoto"
+        app:layout_constraintEnd_toStartOf="@+id/takenPhoto"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="@+id/takenPhoto"
         app:layout_constraintVertical_bias="0.25" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
