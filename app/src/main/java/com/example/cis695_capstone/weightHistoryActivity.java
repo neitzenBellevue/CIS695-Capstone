@@ -73,7 +73,7 @@ public class weightHistoryActivity extends AppCompatActivity {
             dateSet.setText(date);
             weightSet.setText(Integer.toString(weight));
             if(location != null) imageSet.setImageURI(Uri.parse(location));
-            imageSet.setMinimumHeight(300);
+            imageSet.setMinimumHeight(300); // Todo: Find more graceful means of sizing.
             imageSet.setMinimumWidth(300);
 
             //Todo: Link Edit Button

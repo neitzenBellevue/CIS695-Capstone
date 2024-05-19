@@ -30,7 +30,6 @@ public class settingsActivity extends AppCompatActivity {
         initDatePicker();
         renderView();
         dateButton = findViewById(R.id.datePickerButton2);
-        dateButton.setText(getTodaysDate()); // Sets default day to today.
     }
 
     public void submitButton(View button){
