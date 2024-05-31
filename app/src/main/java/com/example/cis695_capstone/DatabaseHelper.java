@@ -79,7 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // In cases where multiple users exist, each row would represent a different user. Not in scope for this though.
     public boolean updateSettings(int beginningWeight, int goalWeight, Boolean gender, int height, String goalDate){
-        SQLiteDatabase db = this.getWritableDatabase();
+         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
         cv.put(COLUMN_GENDER, gender);

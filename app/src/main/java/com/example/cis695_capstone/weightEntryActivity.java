@@ -208,7 +208,7 @@ public class weightEntryActivity extends AppCompatActivity {
     private void fillEntries(){
         weightEntry entry = databaseHelper.getAllEntries().get(idNum);
 
-        weight.setText(Integer.toString(entry.getWeight()));
+         weight.setText(Integer.toString(entry.getWeight()));
         dateButton.setText(entry.getDate());
         this.fname = entry.getImage();
         imageView.setImageURI(Uri.parse(fname));

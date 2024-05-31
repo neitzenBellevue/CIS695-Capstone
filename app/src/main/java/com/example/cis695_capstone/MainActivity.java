@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         } else ((TextView)findViewById(R.id.toDateGenerated)).setText("You haven't started yet.");
     }
     private void renderLatestWeight(){
-        if(!history.isEmpty()){
+         if(!history.isEmpty()){
             int curWeight = history.get(history.size() - 1).getWeight();
             ((TextView)findViewById(R.id.currentWeightDataText)).setText(Integer.toString(curWeight) + " LBS");
         }
