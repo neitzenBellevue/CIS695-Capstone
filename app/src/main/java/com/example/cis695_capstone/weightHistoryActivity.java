@@ -78,7 +78,7 @@ public class weightHistoryActivity extends AppCompatActivity {
             imageSet.setMinimumHeight(300);
             imageSet.setMinimumWidth(300);
 
-             editButton.setOnClickListener(new View.OnClickListener() {
+            editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(weightHistoryActivity.this, weightEntryActivity.class);

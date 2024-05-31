@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -62,15 +63,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return insert != -1;
     }
 
-    public boolean editEntry(weightEntry weightEntry, String ID){
+    public boolean editEntry(weightEntry weightEntry, int ID){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
+        ID++;
+        String id = "" + ID;
 
         cv.put(COLUMN_WEIGHT, weightEntry.getWeight());
         cv.put(COLUMN_IMAGE_LOCATION, weightEntry.getImage());
         cv.put(COLUMN_DATE, weightEntry.getDate());
-
-        long insert = db.update(WEIGHT_TABLE, cv, "_id = ?", new String[]{ID});
+        Log.d("ID Num", "ID Num is: " + id);
+        long insert = db.update(WEIGHT_TABLE, cv, "ID = ?", new String[]{id});
+        Log.d("Database Result", "DB Update result is: " + insert);
 
         db.close();
 

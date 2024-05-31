@@ -60,7 +60,7 @@ public class weightEntryActivity extends AppCompatActivity {
         this.imageButton = findViewById(R.id.pictureButton);
         this.imageView = findViewById(R.id.takenPhoto);
         this.idNum = getIntent().getIntExtra("ID", -1);
-
+        System.out.print(idNum);
         if(idNum != -1) fillEntries();
 
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -91,12 +91,23 @@ public class weightEntryActivity extends AppCompatActivity {
         if(!weight.getText().toString().isEmpty() && Integer.parseInt(weight.getText().toString()) > 0 &&
                 !dateButton.getText().toString().isEmpty()){ // Verifying that weight and date exists;
             Intent i = new Intent(this, MainActivity.class);
-
-            weightEntry newEntry = new weightEntry(Integer.parseInt(weight.getText().toString()),
-                    dateButton.getText().toString(), "/data/data/com.example.cis695_capstone/files/images/" + fname);
-
+            weightEntry newEntry;
+            String fLocation = "/data/data/com.example.cis695_capstone/files/images/";
+            Log.d("file name", "File name is: " + fname);
+            if(fname.isEmpty()) {
+                newEntry = new weightEntry(Integer.parseInt(weight.getText().toString()),
+                        dateButton.getText().toString(), "");
+            }
+            else if(idNum != -1 && fname.contains(fLocation)){
+                newEntry = new weightEntry(Integer.parseInt(weight.getText().toString()),
+                        dateButton.getText().toString(), fname);
+            }
+            else{
+                newEntry = new weightEntry(Integer.parseInt(weight.getText().toString()),
+                        dateButton.getText().toString(), fLocation + fname);
+            }
             if(idNum == -1) databaseHelper.addEntry(newEntry);
-            else databaseHelper.editEntry(newEntry, "" + idNum);
+            else databaseHelper.editEntry(newEntry, idNum);
 
             startActivity(i);
         } else findViewById(R.id.errorText).setVisibility(View.VISIBLE);
@@ -208,7 +219,7 @@ public class weightEntryActivity extends AppCompatActivity {
     private void fillEntries(){
         weightEntry entry = databaseHelper.getAllEntries().get(idNum);
 
-         weight.setText(Integer.toString(entry.getWeight()));
+        weight.setText(Integer.toString(entry.getWeight()));
         dateButton.setText(entry.getDate());
         this.fname = entry.getImage();
         imageView.setImageURI(Uri.parse(fname));
