@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.os.Environment;
@@ -25,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
@@ -38,6 +40,7 @@ public class weightEntryActivity extends AppCompatActivity {
     DatabaseHelper databaseHelper = new DatabaseHelper(weightEntryActivity.this);
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private String fname = "";
+    private int idNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,9 @@ public class weightEntryActivity extends AppCompatActivity {
         weight.setText(lastWeight); // Sets default weight to last known or 150LBS);
         this.imageButton = findViewById(R.id.pictureButton);
         this.imageView = findViewById(R.id.takenPhoto);
+        this.idNum = getIntent().getIntExtra("ID", -1);
+
+        if(idNum != -1) fillEntries();
 
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 o -> {
@@ -64,7 +70,7 @@ public class weightEntryActivity extends AppCompatActivity {
                         Bitmap bitmap = (Bitmap) bundle.get("data");
                         imageView.setImageBitmap(bitmap);
                         saveBitMap(bitmap);
-                        imageButton.setEnabled(false); // Todo: Delete picture if retaken and allow to do this over and over.
+                        imageButton.setEnabled(false);
                     }
                 });
         imageButton.setOnClickListener(new View.OnClickListener(){
@@ -89,7 +95,8 @@ public class weightEntryActivity extends AppCompatActivity {
             weightEntry newEntry = new weightEntry(Integer.parseInt(weight.getText().toString()),
                     dateButton.getText().toString(), "/data/data/com.example.cis695_capstone/files/images/" + fname);
 
-            databaseHelper.addEntry(newEntry);
+            if(idNum == -1) databaseHelper.addEntry(newEntry);
+            else databaseHelper.editEntry(newEntry, "" + idNum);
 
             startActivity(i);
         } else findViewById(R.id.errorText).setVisibility(View.VISIBLE);
@@ -109,7 +116,7 @@ public class weightEntryActivity extends AppCompatActivity {
             File myDir = new File("/data/data/com.example.cis695_capstone/files/images");
             myDir.mkdirs();
             Random rand = new Random();
-            this.fname = rand.nextInt(1000000) + ".jpg";
+            if(fname.isEmpty()) this.fname = rand.nextInt(1000000) + ".jpg";
             File file = new File(myDir, fname);
 
             FileOutputStream out = new FileOutputStream(file);
@@ -138,7 +145,10 @@ public class weightEntryActivity extends AppCompatActivity {
         int style = AlertDialog.BUTTON_POSITIVE;
 
         datePickerDialog = new DatePickerDialog(this, style, dateSetListener, year, month, day);
-        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+        /*
+        Commenting out max date on Professors recommendation for testing.
+        datePickerDialog.getDatePicker(a).setMaxDate(System.currentTimeMillis());
+         */
     }
     private String makeDateString(int day, int month, int year){
         return getMonthFormat(month) + " " + day + " " + year;
@@ -193,5 +203,14 @@ public class weightEntryActivity extends AppCompatActivity {
     }
     public void openDatePicker(View view){
         datePickerDialog.show();
+    }
+
+    private void fillEntries(){
+        weightEntry entry = databaseHelper.getAllEntries().get(idNum);
+
+        weight.setText(Integer.toString(entry.getWeight()));
+        dateButton.setText(entry.getDate());
+        this.fname = entry.getImage();
+        imageView.setImageURI(Uri.parse(fname));
     }
 }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -46,7 +47,7 @@ public class weightHistoryActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    static class EntryListAdapter extends ArrayAdapter<weightEntry> {
+    class EntryListAdapter extends ArrayAdapter<weightEntry> {
         private static final String TAG = "EntryListAdapter";
         private final Context context;
         int resource;
@@ -69,14 +70,22 @@ public class weightHistoryActivity extends AppCompatActivity {
             TextView dateSet = (TextView) convertView.findViewById(R.id.dateGenerated);
             TextView weightSet = (TextView) convertView.findViewById(R.id.weightGenerated);
             ImageView imageSet = (ImageView) convertView.findViewById(R.id.imageGenerated);
+            Button editButton = (Button) convertView.findViewById(R.id.editButton);
 
             dateSet.setText(date);
             weightSet.setText(Integer.toString(weight));
             if(location != null) imageSet.setImageURI(Uri.parse(location));
-            imageSet.setMinimumHeight(300); // Todo: Find more graceful means of sizing.
+            imageSet.setMinimumHeight(300);
             imageSet.setMinimumWidth(300);
 
-            //Todo: Link Edit Button
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(weightHistoryActivity.this, weightEntryActivity.class);
+                    i.putExtra("ID", position);
+                    startActivity(i);
+                }
+            });
 
             return convertView;
         }
